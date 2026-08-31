@@ -142,8 +142,17 @@ def main() -> int:
             models[g["model"]] = models.get(g["model"], 0) + 1
         total_days += g["lifespan_days"]
 
+    # Deterministic build: reuse existing generated_at so CI freshness check
+    # (git diff --exit-code) only trips when actual grave data changes.
+    existing_at = None
+    if OUT_JSON.exists():
+        try:
+            existing_at = json.loads(OUT_JSON.read_text(encoding="utf-8"))["stats"]["generated_at"]
+        except Exception:
+            existing_at = None
+
     stats = {
-        "generated_at": datetime.now(timezone_utc := __import__("datetime").timezone.utc).isoformat(timespec="seconds"),
+        "generated_at": existing_at or datetime.now(timezone_utc := __import__("datetime").timezone.utc).isoformat(timespec="seconds"),
         "total": len(graves),
         "avg_lifespan_days": round(total_days / len(graves)) if graves else 0,
         "causes": dict(sorted(causes.items(), key=lambda kv: -kv[1])),

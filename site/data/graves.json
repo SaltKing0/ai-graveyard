@@ -1,0 +1,70 @@
+{
+  "stats": {
+    "generated_at": "2026-08-31T16:12:42+00:00",
+    "total": 3,
+    "avg_lifespan_days": 58,
+    "causes": {
+      "api-costs": 1,
+      "prompt-drift": 1,
+      "shipped-by-platform": 1
+    },
+    "models": {
+      "claude-sonnet-4": 1,
+      "gpt-4o": 1,
+      "gpt-4o-mini": 1
+    }
+  },
+  "graves": [
+    {
+      "slug": "commitbuddy",
+      "name": "CommitBuddy",
+      "one_liner": "CLI that watches staged diffs and writes conventional-commit messages",
+      "author": "anonymous",
+      "born": "2026-01-05",
+      "died": "2026-02-27",
+      "lifespan_days": 53,
+      "cause": "api-costs",
+      "model": "claude-sonnet-4",
+      "framework": "none",
+      "language": "Rust",
+      "epitaph": "\"847 commits summarized beautifully. Not one bill paid.\"",
+      "evidence": null,
+      "lesson": "Before building any tool that makes an LLM call per user action, model the cost at 100 users and 50 calls/day — not at \"me using it once\". The unit economics die long before the tech does.",
+      "postmortem": "It worked great. Fast, small Rust binary, streamed the commit message\ninto the terminal, people in my team actually installed it. That was the\nproblem.\n\nI paid for the API key. Ten users, each committing ~15 times a day, each\ncommit a full diff context. My monthly bill went from coffee money to\n\"that is a nice dinner for two\" in three weeks.\n\nI tried smaller models (quality dropped, users noticed), caching (commit\nmessages are unique by nature), and a free tier (rate limits made it\nuseless at 5pm on a Friday).\n\nThe honest math: a good commit message is worth maybe 2 cents of value\nto a user. The API call cost 4 cents. You cannot build a product on a\nnegative margin per action, and nobody wants to enter a credit card for\ngit tooling.\n\nLesson filed under: the model is a supplier, and suppliers send invoices."
+    },
+    {
+      "slug": "querybeast",
+      "name": "QueryBeast",
+      "one_liner": "RAG chatbot over our Notion workspace so the team could \"just ask the wiki\"",
+      "author": "saltking0",
+      "born": "2026-02-10",
+      "died": "2026-04-18",
+      "lifespan_days": 67,
+      "cause": "prompt-drift",
+      "model": "gpt-4o",
+      "framework": "LangChain",
+      "language": "Python",
+      "epitaph": "\"It answered correctly exactly once. The team still talks about it like a comet.\"",
+      "evidence": "https://github.com/saltking0/querybeast",
+      "lesson": "RAG quality is 90% chunking and evaluation, 10% prompt. I built zero evals, so every \"fix\" was vibes — and half of them silently regressed other queries.",
+      "postmortem": "Built it in a weekend, demo went great. The system prompt was basically a\npersonality cult around \"always cite the source\".\n\nWeek two: teammates started asking real questions. It hallucinated a\nvacation policy with impressive confidence. I patched the prompt. That\nbroke the HR questions. I patched again. Two weeks later the prompt was\n300 lines long and I was afraid to touch it.\n\nThe kill shot: someone asked the same question twice and got two\ndifferent answers. Not slightly different — completely different. I had\nno eval set, so I literally could not tell if my latest prompt change had\nmade things better or worse. I was tuning a machine with no gauge.\n\nShut it down on a Tuesday. The Notion search bar, it turns out, had a\n100% answer rate."
+    },
+    {
+      "slug": "standupscribe",
+      "name": "StandupScribe",
+      "one_liner": "Slack bot that read yesterday's channel history and posted AI-summaries as fake standup notes",
+      "author": "saltking0",
+      "born": "2025-11-20",
+      "died": "2026-01-12",
+      "lifespan_days": 53,
+      "cause": "shipped-by-platform",
+      "model": "gpt-4o-mini",
+      "framework": "Slack Bolt",
+      "language": "TypeScript",
+      "epitaph": "\"Killed by a changelog entry. Cause of death: 'Also new this month...'\"",
+      "evidence": null,
+      "lesson": "If your product is a thin layer over a platform API, assume the platform will absorb it within 12 months. Ship fast or pick a layer the vendor cannot reach.",
+      "postmortem": "For three glorious months, my Slack bot posted crisp daily standup\nsummaries nobody asked for but everybody secretly read. 40 teams\ninstalled it. The demo video got 12k views.\n\nThen Slack shipped native \"AI Channel Summaries\" in the exact plan tier\nmy users were on. Same button position, same output format, included in\na plan people already paid for.\n\nI could not compete with \"already in the sidebar, zero setup\". Neither\ncould any other wrapper around the same API. Install rate went to zero\nin a week; churn followed.\n\nThe corpse actually validated the idea — people loved summaries. It just\nproved the value belonged to the platform, not to the 200-line wrapper\ndelivering it. The graveyard entry is the cheapest consulting report I\never got: build under the platform, not on top of it."
+    }
+  ]
+}

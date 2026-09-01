@@ -1,0 +1,142 @@
+name: ⚰️ Bury a project
+description: Submit a dead (or hibernating) AI project to the graveyard
+title: "Grave: <project name>"
+labels: ["new-grave"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for donating a corpse 🪦 Fill in the fields below — a maintainer
+        will turn this into `graves/<slug>.md` and the site rebuilds on merge.
+        The **lesson** is the most important field: what would you do differently?
+  - type: input
+    id: name
+    attributes:
+      label: Project name
+      description: The name it went by (or wished it had).
+      placeholder: QueryBeast
+    validations:
+      required: true
+  - type: input
+    id: one_liner
+    attributes:
+      label: One-liner
+      description: What it did, in one sentence.
+      placeholder: RAG chatbot over our Notion workspace so the team could "just ask the wiki"
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: Author
+      description: Your GitHub handle, or write "anonymous".
+      placeholder: SaltKing0
+    validations:
+      required: true
+  - type: input
+    id: born
+    attributes:
+      label: Born (start date)
+      description: When work started. YYYY-MM-DD, best guess is fine.
+      placeholder: 2026-02-10
+    validations:
+      required: true
+  - type: input
+    id: died
+    attributes:
+      label: Died (date you gave up)
+      description: YYYY-MM-DD. If the project is still running, give the last active date and set status below.
+      placeholder: 2026-04-18
+    validations:
+      required: true
+  - type: dropdown
+    id: status
+    attributes:
+      label: Status
+      description: Dead projects get a death date; alive/paused ones get a badge instead.
+      options:
+        - dead (default)
+        - paused
+        - alive
+    validations:
+      required: true
+  - type: dropdown
+    id: cause
+    attributes:
+      label: Cause of death
+      description: Pick the one that killed it.
+      options:
+        - model-too-dumb — the model was too weak for the use case
+        - api-costs — API costs exploded
+        - prompt-drift — not reproducible / quality drifted
+        - shipped-by-platform — the model vendor shipped it natively
+        - no-demand — worked technically, nobody wanted it
+        - fun-only — fun project, motivation faded
+        - complexity — complexity / maintenance hell
+        - context-limits — context window killed it
+        - latency — too slow to be useful
+        - other
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Main model (optional)
+      placeholder: gpt-4o
+    validations:
+      required: false
+  - type: input
+    id: framework
+    attributes:
+      label: Main framework (optional)
+      placeholder: LangChain
+    validations:
+      required: false
+  - type: input
+    id: language
+    attributes:
+      label: Main language (optional)
+      placeholder: Python
+    validations:
+      required: false
+  - type: input
+    id: epitaph
+    attributes:
+      label: Epitaph (optional, encouraged)
+      description: One funny sentence for the tombstone.
+      placeholder: "It answered correctly exactly once. The team still talks about it like a comet."
+    validations:
+      required: false
+  - type: input
+    id: evidence
+    attributes:
+      label: Evidence (optional)
+      description: Repo / screenshot / demo URL — proof the project existed.
+      placeholder: https://github.com/you/project
+    validations:
+      required: false
+  - type: textarea
+    id: lesson
+    attributes:
+      label: Lesson
+      description: The gold. What you would do differently next time — one or two sentences.
+      placeholder: RAG quality is 90% chunking and evaluation, 10% prompt. I built zero evals, so every "fix" was vibes.
+    validations:
+      required: true
+  - type: textarea
+    id: postmortem
+    attributes:
+      label: Postmortem (optional)
+      description: The story in your own words — what worked, where it went wrong, the moment you knew it was over. Max ~500 words.
+      placeholder: Built it in a weekend, demo went great. Then week two happened…
+    validations:
+      required: false
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Ground rules
+      options:
+        - label: This is my project (or I have permission to memorialize it)
+          required: true
+        - label: I'm being honest — the lesson is the point, not the shame
+          required: true

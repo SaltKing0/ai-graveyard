@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Direct PR (preferred)
+    url: https://github.com/SaltKing0/ai-graveyard/blob/main/README.md#contribute
+    about: Skip the queue — copy graves/_template.md and open a pull request with your graves/<slug>.md directly.

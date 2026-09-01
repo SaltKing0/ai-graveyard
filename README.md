@@ -23,6 +23,8 @@ Rules:
 - Only submit projects you built or have permission to memorialize
 - Be honest. The lesson is the point, not the shame.
 - Want to stay private? Set `author: anonymous`
+- Project still running? Set `status: alive` (or `paused`) — the stone
+  shows a "still breathing" badge instead of a death date.
 
 ## Cause-of-death taxonomy
 

@@ -21,6 +21,8 @@ CAUSES = (
     "model-too-dumb", "api-costs", "prompt-drift", "shipped-by-platform",
     "no-demand", "fun-only", "complexity", "context-limits", "latency", "other",
 )
+STATUSES = ("dead", "paused", "alive")
+DEFAULT_STATUS = "dead"
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
@@ -86,6 +88,10 @@ def load_grave(path: Path) -> tuple[dict, list[str]]:
 
     slug = path.stem
     lifespan_days = (died - born).days
+    status = fm.get("status") or DEFAULT_STATUS
+    if status not in STATUSES:
+        errors.append(f"status must be one of {', '.join(STATUSES)}; got {status!r}")
+        return {}, errors
     grave = {
         "slug": slug,
         "name": fm["name"],
@@ -95,6 +101,7 @@ def load_grave(path: Path) -> tuple[dict, list[str]]:
         "died": fm["died"],
         "lifespan_days": lifespan_days,
         "cause": fm["cause"],
+        "status": status,
         "model": fm.get("model") or None,
         "framework": fm.get("framework") or None,
         "language": fm.get("language") or None,

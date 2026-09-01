@@ -9,6 +9,7 @@ one_liner: What it did, in one sentence    # *
 author: your-github-handle                 # * or "anonymous"
 born: 2026-01-15                           # * start date (YYYY-MM-DD, best guess is fine)
 died: 2026-03-02                           # * date you gave up (YYYY-MM-DD)
+status: dead                               # optional: dead (default) | paused | alive
 model: gpt-4o                              # main model (optional)
 framework: LangChain                       # main framework (optional)
 language: Python                           # main language (optional)

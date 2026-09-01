@@ -168,6 +168,12 @@
     font: 500 11px/1 var(--serif-display); letter-spacing: .18em; text-transform: uppercase;
     color: #23262b; background: rgba(0,0,0,.18); border-radius: 2px; padding: 6px 10px;
   }
+  .status-badge {
+    display: inline-block; font: 500 12px/1 var(--serif-display);
+    letter-spacing: .14em; text-transform: uppercase; border-radius: 2px; padding: 5px 10px;
+  }
+  .status-alive { color: #2f4a2e; background: var(--moss); }
+  .status-paused { color: #4a3f22; background: #c9b06a; }
   .empty { color: var(--faded); padding: 60px 0 40px; text-align: center; font-style: italic; font-size: 20px; }
 
   /* ── Modal (epitaph plaque) ─────────────────────────── */
@@ -311,16 +317,21 @@ function renderGrid() {
     (!q || [g.name, g.one_liner, g.lesson, g.model, g.framework, g.language, g.author]
       .join(" ").toLowerCase().includes(q)));
   document.getElementById("empty").hidden = graves.length > 0;
-  document.getElementById("grid").innerHTML = graves.map(g =>
-    `<article class="tomb" data-slug="${esc(g.slug)}">
+  document.getElementById("grid").innerHTML = graves.map(g => {
+    const isAlive = g.status && g.status !== "dead";
+    const dates = isAlive
+      ? `<span class="status-badge status-${esc(g.status)}">${g.status === "alive" ? "♥ still breathing" : "⏸ hibernating"}</span>`
+      : `b. ${esc(g.born)}<br>d. ${esc(g.died)}`;
+    return `<article class="tomb" data-slug="${esc(g.slug)}">
       <div class="cross">✝</div>
       <div class="rip">R · I · P</div>
       <h3>${esc(g.name)}</h3>
-      <div class="dates">b. ${esc(g.born)}<br>d. ${esc(g.died)}</div>
+      <div class="dates">${dates}</div>
       <div class="divider"></div>
       <p class="oneliner">${esc(g.one_liner)}</p>
       <span class="cause">☠ ${esc(g.cause)}</span>
-    </article>`).join("");
+    </article>`;
+  }).join("");
   document.querySelectorAll(".tomb").forEach(el =>
     el.onclick = () => openGrave(DATA.graves.find(g => g.slug === el.dataset.slug)));
 }

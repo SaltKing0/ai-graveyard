@@ -336,7 +336,7 @@ function renderGrid() {
     el.onclick = () => openGrave(DATA.graves.find(g => g.slug === el.dataset.slug)));
 }
 
-function openGrave(g) {
+function openGrave(g, skipUrl) {
   if (!g) return;
   const days = g.lifespan_days;
   const lifespan = days >= 365 ? `${(days / 365).toFixed(1)} years` : `${days} days`;
@@ -355,10 +355,39 @@ function openGrave(g) {
     (g.language ? ` · language: <b>${esc(g.language)}</b>` : "") +
     (g.evidence ? ` · <a href="${esc(g.evidence)}" target="_blank" rel="noopener">evidence ↗</a>` : "");
   document.getElementById("dlg").showModal();
+  if (!skipUrl) {
+    const url = new URL(location.href);
+    url.searchParams.set("grave", g.slug);
+    history.pushState(null, "", url);
+  }
 }
 
+const dlg = document.getElementById("dlg");
+dlg.addEventListener("close", () => {
+  const url = new URL(location.href);
+  if (url.searchParams.has("grave")) {
+    url.searchParams.delete("grave");
+    history.pushState(null, "", url);
+  }
+});
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+function graveFromUrl() {
+  const slug = new URLSearchParams(location.search).get("grave");
+  return slug ? DATA.graves.find(g => g.slug === slug) : null;
+}
+
+window.addEventListener("popstate", () => {
+  const g = graveFromUrl();
+  if (g) openGrave(g, true);
+  else if (dlg.open) dlg.close();
+});
+
 document.getElementById("q").addEventListener("input", renderGrid);
-load();
+load().then(() => {
+  const g = graveFromUrl();
+  if (g) openGrave(g, true);
+});
 </script>
 </body>
 </html>

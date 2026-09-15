@@ -42,7 +42,13 @@ def parse_frontmatter(text: str, path: Path) -> dict[str, str]:
         if ":" not in line:
             raise ValueError(f"line {lineno}: expected 'key: value', got: {line!r}")
         key, _, value = line.partition(":")
-        data[key.strip()] = value.strip()
+        value = value.strip()
+        # The template documents quoted values (`epitaph: "..."`), and YAML
+        # authors write them by habit. Strip one matching pair so the site can
+        # add its own typographic quotes without doubling them.
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+            value = value[1:-1]
+        data[key.strip()] = value
     return data
 
 

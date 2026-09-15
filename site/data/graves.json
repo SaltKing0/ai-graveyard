@@ -1,13 +1,16 @@
 {
   "stats": {
     "generated_at": "2026-08-31T16:12:42+00:00",
-    "total": 3,
-    "avg_lifespan_days": 2,
+    "total": 4,
+    "avg_lifespan_days": 8,
     "causes": {
-      "other": 3
+      "other": 3,
+      "complexity": 1,
+      "inexperienced": 1
     },
     "models": {
-      "none": 3
+      "none": 3,
+      "bring-your-own": 1
     }
   },
   "graves": [
@@ -73,6 +76,28 @@
       "evidence": "https://github.com/SaltKing0/raijin",
       "lesson": "CI is a service, not a guarantee. If the CI vendor is down, the workflow file itself is the contract — run it locally with the same container steps and report the result back as a check run.",
       "postmortem": "Currently hibernating, not actually dead — the kami family (kagutsuchi,\nfujin, raijin) is active and this entry uses the alive status badge.\n\nRaijin checks the GitHub statuspage for the Actions component. When it\ndegrades, raijin runs the workflow file locally via act in a container,\nstreams the output, and can submit runs to a self-hosted raijin server\nthat reports a check run back to GitHub. It shares the ghhealth engine\nwith kagutsuchi and fujin."
+    },
+    {
+      "slug": "tenjin",
+      "name": "Tenjin",
+      "one_liner": "A self-hosted personal agent harness — REPL, one-shot CLI and always-on gateway in one zero-dependency TypeScript binary",
+      "author": "SaltKing0",
+      "born": "2026-08-21",
+      "died": "2026-09-15",
+      "lifespan_days": 25,
+      "cause": "complexity",
+      "causes": [
+        "complexity",
+        "inexperienced"
+      ],
+      "status": "dead",
+      "model": "bring-your-own",
+      "framework": "none",
+      "language": "TypeScript",
+      "epitaph": "\"1,956 tests passed. The first real start returned 401.\"",
+      "evidence": "https://github.com/SaltKing0/Stealth",
+      "lesson": "Green tests and closed issues are not evidence that the product works. My definition of done was \"issue closed + suite green\", and both are satisfiable without a working product. The acceptance gate has to be one path a stranger can run in 60 seconds, verified by a blackbox test that starts the real binary with the real config file and no environment variables. Corollary: a module with no caller is not finished, it is dead code with tests. And the inexperience is part of it — four construction sites for one object, an entry point that every command was appended to, distribution built before checking the name: those are first-timer failure modes, and no amount of test discipline catches them.",
+      "postmortem": "# Postmortem\n\nTenjin was a self-hosted personal agent harness in Bun + TypeScript with zero\nruntime dependencies: an interactive REPL, a one-shot CLI, and an always-on\ngateway with channels, scheduled jobs, heartbeats and a web console. It grew\nto 32,413 lines across 153 source files, 153 test files, 1,956 passing tests,\n699 commits and ~489 pull requests, of which 487 were closed. It was also the\nfirst codebase of this size I had ever built.\n\n**What worked.** The security and audit layer: a path/command guard, a\nfive-rung approval mode ladder, risk tiers, secret redaction, workspace\nconfinement and a JSONL audit trail — 1,970 lines wired into 16+ modules with\n~10 dedicated test files. It was the part of the project that was both real\nand reachable.\n\n**Where it went wrong.** Four failures, all the same failure.\n\n*The primary path was broken in main and stayed broken.* `src/index.ts:195`\nbuilt the `ProviderRegistry` with `undefined` as the keys argument; three\nother call sites passed the configured keys correctly. The registry fell back\nto `env.OPENAI_API_KEY`, so anyone who configured a provider the documented\nway — in `providers.yaml` — got an empty bearer token and a 401 on the REPL,\nthe one-shot CLI and the TUI. The one-line fix sat open as PR #487 for\neleven days.\n\n*The test suite could not see it.* Every end-to-end test spawned the real\nbinary with `ANTHROPIC_API_KEY` injected as an environment variable — exactly\nthe fallback that masked the bug. No test ran the binary with a provider\nconfigured only in the YAML file.\n\n*\"Delivered\" did not mean \"active\".* An orphan scan found 11–14 modules that\nwere built, test-covered and never imported at runtime: the local embedding\nstrategy, the grounding gate, the memory signals, the session event store,\nthe routing telemetry, the audit tracing. The product's memory, grounding and\ntelemetry claims were true in the tests and false in the product.\n\n*Distribution was built for a name it could not have.* The cross-compiled\nbinary matrix, the one-command installer and the npm publish config were all\nmerged — for a package name that was already taken on npm. Zero git tags, one\nversion, and a 35-line changelog covering 487 closed items.\n\n**The moment I knew.** I ran the primary path with my own configuration and\ngot a 401, after 1,956 tests had passed.\n\n**Root cause.** Tenjin was three projects at once — a personal tool, a\nshippable product, and a portfolio piece — and the definition of done was\n\"issue closed + suite green\", which satisfies none of the three. The\narchitecture (a 1,090-line entry point, four construction sites for the same\nregistry, 14 unwired modules) is a symptom of that metric, not its cause.\n\n**And I was inexperienced.** This was my first codebase at this scale, and it\nshows in ways no test suite can catch: four construction sites for one object\ninstead of one, an entry point that every new command was appended to,\nmodules written and tested before anything called them, distribution\ninfrastructure built before checking whether the name was available. None of\nthose are architecture decisions anyone makes on purpose. They are what\n\"add, don't design\" looks like when nobody has told you yet that it is a\nchoice.\n\n**What I'd do differently.** One path a stranger can run in 60 seconds, and\nthat path is the acceptance gate. Check the name before building\ndistribution. A module without a caller is not finished. And pick one role\nfor the project, not three."
     }
   ]
 }

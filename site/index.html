@@ -269,7 +269,8 @@
 const CAUSE_COLORS = {
   "model-too-dumb": "#b06a6a", "api-costs": "#b3925e", "prompt-drift": "#a9a35e",
   "shipped-by-platform": "#926aa8", "no-demand": "#5e7fa8", "fun-only": "#5ea89f",
-  "complexity": "#a85e7e", "context-limits": "#7e5ea8", "latency": "#5e86a8", "other": "#8a8f99"
+  "complexity": "#a85e7e", "context-limits": "#7e5ea8", "latency": "#5e86a8",
+  "inexperienced": "#9e7a5e", "other": "#8a8f99"
 };
 let DATA = { stats: { causes: {}, total: 0 }, graves: [] };
 let activeCause = null;
@@ -299,7 +300,7 @@ function renderStats() {
 
 function renderChips() {
   const counts = {};
-  DATA.graves.forEach(g => counts[g.cause] = (counts[g.cause] || 0) + 1);
+  DATA.graves.forEach(g => (g.causes || [g.cause]).forEach(c => counts[c] = (counts[c] || 0) + 1));
   const chips = Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([c, n]) =>
     `<button class="chip" data-cause="${esc(c)}">${esc(c)} · ${n}</button>`).join("");
   document.getElementById("chips").innerHTML = chips;
@@ -313,7 +314,7 @@ function renderChips() {
 function renderGrid() {
   const q = document.getElementById("q").value.trim().toLowerCase();
   const graves = DATA.graves.filter(g =>
-    (!activeCause || g.cause === activeCause) &&
+    (!activeCause || (g.causes || [g.cause]).includes(activeCause)) &&
     (!q || [g.name, g.one_liner, g.lesson, g.model, g.framework, g.language, g.author]
       .join(" ").toLowerCase().includes(q)));
   document.getElementById("empty").hidden = graves.length > 0;
@@ -329,7 +330,7 @@ function renderGrid() {
       <div class="dates">${dates}</div>
       <div class="divider"></div>
       <p class="oneliner">${esc(g.one_liner)}</p>
-      <span class="cause">☠ ${esc(g.cause)}</span>
+      <span class="cause">☠ ${esc((g.causes || [g.cause]).join(" · "))}</span>
     </article>`;
   }).join("");
   document.querySelectorAll(".tomb").forEach(el =>
@@ -341,7 +342,7 @@ function openGrave(g, skipUrl) {
   const days = g.lifespan_days;
   const lifespan = days >= 365 ? `${(days / 365).toFixed(1)} years` : `${days} days`;
   document.getElementById("d-name").textContent = g.name;
-  document.getElementById("d-rip").textContent = `${g.born} – ${g.died}  ·  lived ${lifespan}  ·  cause of death: ${g.cause}`;
+  document.getElementById("d-rip").textContent = `${g.born} – ${g.died}  ·  lived ${lifespan}  ·  cause of death: ${(g.causes || [g.cause]).join(", ")}`;
   document.getElementById("d-oneliner").textContent = g.one_liner;
   document.getElementById("d-epitaph").innerHTML = g.epitaph
     ? `<div class="epitaph">“${esc(g.epitaph)}”</div>` : "";

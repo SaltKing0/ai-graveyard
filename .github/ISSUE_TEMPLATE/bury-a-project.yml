@@ -64,7 +64,7 @@ body:
     id: cause
     attributes:
       label: Cause of death
-      description: Pick the one that killed it.
+      description: Pick the one that killed it — list more than one comma-separated if it was multi-causal.
       options:
         - model-too-dumb — the model was too weak for the use case
         - api-costs — API costs exploded
@@ -75,6 +75,7 @@ body:
         - complexity — complexity / maintenance hell
         - context-limits — context window killed it
         - latency — too slow to be useful
+        - inexperienced — the builder had never done this before
         - other
     validations:
       required: true

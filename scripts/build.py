@@ -19,7 +19,8 @@ OUT_JSON = ROOT / "site" / "data" / "graves.json"
 REQUIRED = ("name", "one_liner", "author", "born", "died", "cause", "lesson")
 CAUSES = (
     "model-too-dumb", "api-costs", "prompt-drift", "shipped-by-platform",
-    "no-demand", "fun-only", "complexity", "context-limits", "latency", "other",
+    "no-demand", "fun-only", "complexity", "context-limits", "latency",
+    "inexperienced", "other",
 )
 STATUSES = ("dead", "paused", "alive")
 DEFAULT_STATUS = "dead"
@@ -64,8 +65,14 @@ def load_grave(path: Path) -> tuple[dict, list[str]]:
     if errors:
         return {}, errors
 
-    if fm["cause"] not in CAUSES:
-        errors.append(f"cause must be one of {', '.join(CAUSES)}; got {fm['cause']!r}")
+    # `cause` may list more than one cause of death, comma-separated: real
+    # deaths are usually multi-causal. The first entry is the primary cause.
+    causes = [c.strip() for c in fm["cause"].split(",") if c.strip()]
+    if not causes:
+        errors.append("cause must name at least one cause of death")
+    for c in causes:
+        if c not in CAUSES:
+            errors.append(f"cause must be one of {', '.join(CAUSES)}; got {c!r}")
 
     born = died = None
     try:
@@ -100,7 +107,8 @@ def load_grave(path: Path) -> tuple[dict, list[str]]:
         "born": fm["born"],
         "died": fm["died"],
         "lifespan_days": lifespan_days,
-        "cause": fm["cause"],
+        "cause": causes[0],
+        "causes": causes,
         "status": status,
         "model": fm.get("model") or None,
         "framework": fm.get("framework") or None,
@@ -144,7 +152,8 @@ def main() -> int:
     models: dict[str, int] = {}
     total_days = 0
     for g in graves:
-        causes[g["cause"]] = causes.get(g["cause"], 0) + 1
+        for cause in g["causes"]:
+            causes[cause] = causes.get(cause, 0) + 1
         if g["model"]:
             models[g["model"]] = models.get(g["model"], 0) + 1
         total_days += g["lifespan_days"]

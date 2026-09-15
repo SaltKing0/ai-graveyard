@@ -29,7 +29,12 @@ Rules:
 ## Cause-of-death taxonomy
 
 `model-too-dumb` · `api-costs` · `prompt-drift` · `shipped-by-platform` ·
-`no-demand` · `fun-only` · `complexity` · `context-limits` · `latency` · `other`
+`no-demand` · `fun-only` · `complexity` · `context-limits` · `latency` ·
+`inexperienced` · `other`
+
+Real deaths are usually multi-causal. List more than one, comma-separated —
+`cause: complexity, inexperienced` — and the first entry counts as the primary
+cause. Every listed cause counts in the aggregates and in the filter chips.
 
 ## Local build
 

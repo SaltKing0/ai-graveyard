@@ -20,6 +20,9 @@
       "died": "2026-08-22",
       "lifespan_days": 2,
       "cause": "other",
+      "causes": [
+        "other"
+      ],
       "status": "alive",
       "model": "none",
       "framework": "none",
@@ -38,6 +41,9 @@
       "died": "2026-08-22",
       "lifespan_days": 2,
       "cause": "other",
+      "causes": [
+        "other"
+      ],
       "status": "alive",
       "model": "none",
       "framework": "none",
@@ -56,6 +62,9 @@
       "died": "2026-08-21",
       "lifespan_days": 1,
       "cause": "other",
+      "causes": [
+        "other"
+      ],
       "status": "alive",
       "model": "none",
       "framework": "none",

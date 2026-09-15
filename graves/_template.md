@@ -13,7 +13,8 @@ status: dead                               # optional: dead (default) | paused |
 model: gpt-4o                              # main model (optional)
 framework: LangChain                       # main framework (optional)
 language: Python                           # main language (optional)
-cause: api-costs                           # * exactly one of:
+cause: api-costs                           # * one or more, comma-separated;
+#     the first entry is the primary cause. Each must be exactly one of:
 #     model-too-dumb      model was too weak for the use case
 #     api-costs           API costs exploded
 #     prompt-drift        not reproducible / quality drifted
@@ -23,6 +24,7 @@ cause: api-costs                           # * exactly one of:
 #     complexity          complexity / maintenance hell
 #     context-limits      context window killed it
 #     latency             too slow to be useful
+#     inexperienced       the builder had never done this before
 #     other
 epitaph: "R.I.P. — one funny sentence for the tombstone"   # optional, but encouraged
 evidence: https://github.com/you/project   # repo / screenshot URL (optional)
